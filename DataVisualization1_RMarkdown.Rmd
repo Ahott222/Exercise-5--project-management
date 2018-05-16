@@ -1,0 +1,47 @@
+---
+title: "Data Visualization_1RMarkdown"
+author: "A. Hott"
+date: "May 16, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r }
+mers <- read.csv("cases.csv")
+head(mers)
+mers$hospitalized[890] <- c("2015-02-20")
+mers <- mers[-471,]
+
+library(lubridate)
+mers$onset2 <- ymd(mers$onset)
+mers$hospitalized2 <- ymd(mers$hospitalized) #5 failed to parse
+class(mers$onset2)
+day0 <- min(na.omit(mers$onset2))
+mers$epi.day <- as.numeric(mers$onset2 - day0)
+library(ggplot2)
+ggplot(data=mers) +
+  geom_bar(mapping=aes(x=epi.day , fill=country)) +
+  labs(x="Epidemic day" , y="case count" , title="Global count of MERS cases by date of symptom onset" , 
+    caption="Data from: http://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv")
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
