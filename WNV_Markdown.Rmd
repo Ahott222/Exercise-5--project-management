@@ -1,0 +1,100 @@
+---
+title: "WNV_Markdown"
+author: "A. Hott"
+date: "May 16, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r }
+read.csv("https://raw.githubusercontent.com/jdrakephd/ideas-workshop/master/wnv.csv")
+WNV <- read.csv("https://raw.githubusercontent.com/jdrakephd/ideas-workshop/master/wnv.csv")
+#setwd("~/./WNV")
+
+ggplot(data=WNV) +
+  geom_histogram(mapping=aes(x=Total))
+
+# Create new column of log of Total
+
+WNV$LogofTotal <- log(WNV$Total)
+
+ggplot(data=WNV) +
+  geom_histogram(mapping=aes(x=LogofTotal)) 
+                             
+                             
+# Command y-axis to plot log of data
+
+ggplot(data=WNV) +
+  geom_histogram(mapping=aes(x=log(Total)))
+
+#Raw case fatality rate (CFR)
+
+WNV$rawCFR <- WNV$Fatal/WNV$Total
+
+ggplot(data=WNV) +
+  geom_histogram(mapping=aes(x=rawCFR))
+
+#Arithmetic operators, logical operators, and function sum to verify variable Total
+
+WNV$Total2 <- rowSums(WNV[ ,3:5])
+
+ifelse(WNV$Total2==WNV$Total, TRUE, FALSE)
+
+#Functions
+
+WNV$EncephRate <- WNV$EncephMen/WNV$Total
+
+meanE <- function(x) {
+  
+  s <- sum(x)
+  n <- length (x)
+  m <- s/n
+  return(m)
+}
+
+StandardError <- function(x) {
+  
+  e <- sd(x)/sqrt(x)
+  return(e)
+}
+
+
+#subset
+
+NY <- subset(WNV , State == "New York")
+
+meanE(NY$EncephRate)
+StandardError(NY$EncephRate)
+
+
+CA <- subset(WNV , State == "California")
+
+meanE(CA$EncephRate)
+StandardError(CA$EncephRate)
+
+CO <- subset(WNV , State == "Colorado")
+
+meanE(CO$EncephRate)
+StandardError(CO$EncephRate)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
